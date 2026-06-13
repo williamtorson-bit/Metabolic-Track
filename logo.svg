@@ -1,0 +1,29 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Metabolic Track logo">
+  <defs>
+    <linearGradient id="mt-ring" x1="80" y1="80" x2="432" y2="432" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#57DFF7"/>
+      <stop offset="0.55" stop-color="#7DE5B2"/>
+      <stop offset="1" stop-color="#C4F35F"/>
+    </linearGradient>
+    <linearGradient id="mt-line" x1="118" y1="282" x2="382" y2="342" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#63E6F8"/>
+      <stop offset="1" stop-color="#C4F35F"/>
+    </linearGradient>
+    <filter id="mt-glow" x="0" y="0" width="512" height="512" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="9" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.39 0 0 0 0 0.9 0 0 0 0 0.83 0 0 0 0.75 0"/>
+      <feBlend in="SourceGraphic" mode="screen"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#0D1424"/>
+  <circle cx="256" cy="256" r="176" stroke="#20334F" stroke-width="18"/>
+  <path d="M256 80a176 176 0 1 0 142.4 279.7" stroke="url(#mt-ring)" stroke-width="22" stroke-linecap="round" filter="url(#mt-glow)"/>
+  <path d="M290 84a176 176 0 0 1 126 139" stroke="#C4F35F" stroke-width="22" stroke-linecap="butt" stroke-dasharray="28 20" filter="url(#mt-glow)"/>
+  <path d="M256 78v110" stroke="#74E9E3" stroke-width="20" stroke-linecap="round" filter="url(#mt-glow)"/>
+  <circle cx="256" cy="198" r="27" fill="#0D1424" stroke="#74E9E3" stroke-width="18" filter="url(#mt-glow)"/>
+  <path d="M118 284l82 43 82 39 102 18" stroke="url(#mt-line)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" filter="url(#mt-glow)"/>
+  <circle cx="118" cy="284" r="26" fill="#57DFF7"/>
+  <circle cx="200" cy="327" r="24" fill="#69E5D7"/>
+  <circle cx="282" cy="366" r="24" fill="#94EE93"/>
+  <circle cx="384" cy="384" r="24" fill="#C4F35F"/>
+</svg>
