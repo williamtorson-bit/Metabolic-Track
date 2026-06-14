@@ -1,16 +1,1390 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#10131f" />
-    <meta name="description" content="Metabolic Track is a Vercel-ready weight, fasting and low-carb tracking app." />
-    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-    <link rel="manifest" href="/manifest.webmanifest" />
-    <title>Metabolic Track</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#07111f" />
+  <meta name="description" content="Metabolic Track - weight, fasting and low-carb tracker." />
+  <title>Metabolic Track</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%2307111f'/%3E%3Ccircle cx='64' cy='64' r='42' fill='none' stroke='%236ee7ff' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M93 34a42 42 0 0 1 10 37' fill='none' stroke='%23b7ff4a' stroke-width='10' stroke-linecap='round' stroke-dasharray='8 8'/%3E%3Cpath d='M30 75 50 84 70 93 98 91' fill='none' stroke='%23b7ff4a' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='30' cy='75' r='8' fill='%236ee7ff'/%3E%3Ccircle cx='50' cy='84' r='8' fill='%236fffe6'/%3E%3Ccircle cx='70' cy='93' r='8' fill='%239ef777'/%3E%3Ccircle cx='98' cy='91' r='8' fill='%23b7ff4a'/%3E%3Cpath d='M64 23v28' stroke='%236ee7ff' stroke-width='8' stroke-linecap='round'/%3E%3Ccircle cx='64' cy='56' r='8' fill='none' stroke='%236ee7ff' stroke-width='8'/%3E%3C/svg%3E" />
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg2: #102033;
+      --card: rgba(21, 32, 53, 0.92);
+      --card2: rgba(26, 40, 66, 0.9);
+      --line: rgba(158, 183, 220, 0.28);
+      --line2: rgba(158, 183, 220, 0.16);
+      --text: #f6f8ff;
+      --muted: #b7c1d6;
+      --subtle: #8f9bb2;
+      --cyan: #6ee7ff;
+      --cyan2: #4dd7f3;
+      --green: #b7ff4a;
+      --green2: #7df792;
+      --amber: #ffd166;
+      --red: #ff7a90;
+      --shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+      --radius: 24px;
+      --radius2: 16px;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    [data-theme="light"] {
+      --bg: #eef7f8;
+      --bg2: #ffffff;
+      --card: rgba(255, 255, 255, 0.92);
+      --card2: rgba(246, 250, 255, 0.95);
+      --line: rgba(43, 62, 95, 0.2);
+      --line2: rgba(43, 62, 95, 0.1);
+      --text: #132033;
+      --muted: #47566e;
+      --subtle: #6b778b;
+      --shadow: 0 18px 50px rgba(35, 70, 100, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(circle at 5% -10%, rgba(110, 231, 255, 0.22), transparent 36rem),
+        radial-gradient(circle at 100% 12%, rgba(183, 255, 74, 0.12), transparent 36rem),
+        linear-gradient(135deg, var(--bg), #050914 72%);
+    }
+
+    [data-theme="light"] body {
+      background:
+        radial-gradient(circle at 5% -10%, rgba(110, 231, 255, 0.28), transparent 32rem),
+        radial-gradient(circle at 100% 12%, rgba(183, 255, 74, 0.20), transparent 34rem),
+        linear-gradient(135deg, #eef7f8, #f7fbff 72%);
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    button { cursor: pointer; }
+
+    .app {
+      width: min(1320px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 34px 0 46px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      background: linear-gradient(135deg, rgba(15, 24, 42, 0.94), rgba(16, 28, 48, 0.84));
+      box-shadow: var(--shadow);
+    }
+
+    [data-theme="light"] .hero {
+      background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(241, 250, 255, 0.9));
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: -50% -10% auto auto;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(110, 231, 255, 0.16), transparent 68%);
+      pointer-events: none;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .logo {
+      width: 68px;
+      height: 68px;
+      flex: 0 0 auto;
+      border-radius: 19px;
+      background: rgba(9, 18, 34, 0.72);
+      box-shadow: inset 0 0 0 1px var(--line), 0 0 28px rgba(110, 231, 255, 0.16);
+      padding: 8px;
+    }
+
+    .brand-text small {
+      display: block;
+      color: var(--green);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-transform: lowercase;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .brand-text strong {
+      font-size: clamp(28px, 5vw, 62px);
+      letter-spacing: -0.055em;
+      line-height: 0.92;
+      display: block;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      color: var(--muted);
+      font-size: clamp(15px, 2vw, 20px);
+      line-height: 1.35;
+      margin: 12px 0 0;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: var(--card2);
+      padding: 12px 16px;
+      border-radius: 14px;
+      min-height: 44px;
+      font-weight: 800;
+      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); border-color: rgba(110, 231, 255, 0.55); }
+    .btn:active { transform: translateY(0); }
+
+    .btn.primary {
+      border: none;
+      color: #07111f;
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+      box-shadow: 0 10px 26px rgba(110, 231, 255, 0.17);
+    }
+
+    .btn.danger { border-color: rgba(255, 122, 144, 0.45); color: var(--red); }
+    .btn.full { width: 100%; }
+    .btn.small { padding: 9px 12px; min-height: 38px; font-size: 13px; }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+      margin-top: 26px;
+    }
+
+    .metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: 1.15fr 1fr 1fr; }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .metric {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      min-height: 108px;
+    }
+
+    .metric-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      flex: 0 0 auto;
+      background: linear-gradient(135deg, rgba(110, 231, 255, 0.23), rgba(183, 255, 74, 0.13));
+      display: grid;
+      place-items: center;
+    }
+
+    .metric-icon svg { width: 26px; height: 26px; }
+    .metric-label { color: var(--muted); font-size: 13px; margin-bottom: 4px; }
+    .metric-value { font-size: clamp(22px, 3vw, 28px); font-weight: 900; letter-spacing: -0.04em; }
+    .metric-note { color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+    h2, h3 { margin: 0; letter-spacing: -0.035em; }
+    h2 { font-size: clamp(24px, 3vw, 32px); }
+    h3 { font-size: 20px; }
+    .section-subtitle { color: var(--muted); margin: 7px 0 0; line-height: 1.35; }
+
+    .chart-wrap { margin-top: 22px; min-height: 260px; }
+    .chart { width: 100%; height: 280px; display: block; overflow: visible; }
+    .axis { stroke: var(--line); stroke-width: 1; }
+    .gridline { stroke: var(--line2); stroke-width: 1; }
+    .tick { fill: var(--muted); font-size: 12px; }
+    .line-actual { fill: none; stroke: var(--cyan); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+    .line-average { fill: none; stroke: var(--amber); stroke-width: 3; stroke-dasharray: 8 10; stroke-linecap: round; stroke-linejoin: round; }
+    .point { fill: var(--green); stroke: rgba(255,255,255,0.55); stroke-width: 1.5; }
+    .legend { display: flex; gap: 20px; align-items: center; color: var(--muted); font-size: 14px; flex-wrap: wrap; margin-top: 6px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; background: var(--cyan); margin-right: 6px; }
+    .dot.avg { background: var(--amber); }
+
+    .notice {
+      border: 1px solid var(--line);
+      background: rgba(110, 231, 255, 0.06);
+      border-radius: 16px;
+      padding: 14px 16px;
+      color: var(--muted);
+      line-height: 1.45;
+      margin-top: 14px;
+    }
+
+    .notice strong { color: var(--text); }
+    .notice.warn { background: rgba(255, 209, 102, 0.08); border-color: rgba(255, 209, 102, 0.25); }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 13px;
+      margin: 14px 0 7px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(22, 34, 57, 0.76);
+      color: var(--text);
+      padding: 13px 14px;
+      min-height: 48px;
+      outline: none;
+    }
+
+    [data-theme="light"] input, [data-theme="light"] select, [data-theme="light"] textarea {
+      background: rgba(255,255,255,0.82);
+    }
+
+    textarea { min-height: 118px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { border-color: var(--cyan); box-shadow: 0 0 0 4px rgba(110, 231, 255, 0.12); }
+
+    .form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .form-row.three-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .button-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .tab {
+      color: var(--muted);
+      border: 1px solid var(--line);
+      background: rgba(22, 34, 57, 0.66);
+      border-radius: 999px;
+      padding: 10px 13px;
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .tab.active {
+      color: #07111f;
+      border-color: transparent;
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+    }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .fast-display {
+      text-align: center;
+      margin: 22px 0;
+      padding: 22px;
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      background: radial-gradient(circle at 50% 0%, rgba(110, 231, 255, 0.12), transparent 58%), rgba(9, 18, 34, 0.28);
+    }
+
+    .fast-time {
+      font-size: clamp(38px, 7vw, 72px);
+      font-weight: 950;
+      letter-spacing: -0.06em;
+      line-height: 0.95;
+    }
+
+    .fast-status { color: var(--muted); margin-top: 10px; }
+
+    .progress-bar {
+      width: 100%;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(143, 155, 178, 0.18);
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+      transition: width 0.3s ease;
+    }
+
+    .stage-list { display: grid; gap: 10px; margin-top: 14px; }
+    .stage {
+      border: 1px solid var(--line2);
+      border-radius: 14px;
+      padding: 13px;
+      color: var(--muted);
+      background: rgba(18, 29, 48, 0.36);
+    }
+    .stage.active { border-color: rgba(183, 255, 74, 0.5); background: rgba(183, 255, 74, 0.08); color: var(--text); }
+    .stage strong { display: block; color: var(--text); margin-bottom: 4px; }
+
+    .table-wrap { overflow-x: auto; margin-top: 14px; }
+    table { width: 100%; border-collapse: collapse; min-width: 680px; }
+    th, td { text-align: left; border-bottom: 1px solid var(--line2); padding: 12px 10px; color: var(--muted); }
+    th { color: var(--text); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+    td strong { color: var(--text); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .footer {
+      margin-top: 26px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .empty {
+      min-height: 180px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: 18px;
+      margin-top: 16px;
+      padding: 20px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 980px) {
+      .metrics, .two, .three { grid-template-columns: 1fr; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .actions { justify-content: flex-start; }
+      .hero { padding: 20px; border-radius: 26px; }
+      .card { padding: 18px; }
+    }
+
+    @media (max-width: 560px) {
+      .app { width: min(100% - 24px, 1320px); padding-top: 20px; }
+      .brand { align-items: flex-start; gap: 10px; }
+      .logo { width: 52px; height: 52px; border-radius: 16px; padding: 6px; }
+      .brand-text small { font-size: 12px; }
+      .brand-text strong { font-size: 44px; }
+      .form-row, .form-row.three-cols { grid-template-columns: 1fr; }
+      .button-row .btn { width: 100%; }
+      .chart { height: 240px; }
+      .metric { min-height: 94px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app" id="app">
+    <section class="hero">
+      <div class="topbar">
+        <div class="brand" aria-label="Metabolic Track">
+          <div class="logo" aria-hidden="true">
+            <svg viewBox="0 0 128 128" role="img" aria-label="Metabolic Track logo">
+              <defs>
+                <linearGradient id="logoGradient" x1="16" x2="112" y1="24" y2="106" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#6ee7ff" />
+                  <stop offset="0.55" stop-color="#6fffe6" />
+                  <stop offset="1" stop-color="#b7ff4a" />
+                </linearGradient>
+              </defs>
+              <rect width="128" height="128" rx="28" fill="#07111f" />
+              <circle cx="64" cy="64" r="42" fill="none" stroke="url(#logoGradient)" stroke-width="10" stroke-linecap="round" />
+              <path d="M93 34a42 42 0 0 1 10 37" fill="none" stroke="#b7ff4a" stroke-width="10" stroke-linecap="round" stroke-dasharray="8 8" />
+              <path d="M30 75 50 84 70 93 98 91" fill="none" stroke="url(#logoGradient)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+              <circle cx="30" cy="75" r="8" fill="#6ee7ff" />
+              <circle cx="50" cy="84" r="8" fill="#6fffe6" />
+              <circle cx="70" cy="93" r="8" fill="#9ef777" />
+              <circle cx="98" cy="91" r="8" fill="#b7ff4a" />
+              <path d="M64 23v28" stroke="#6ee7ff" stroke-width="8" stroke-linecap="round" />
+              <circle cx="64" cy="56" r="8" fill="none" stroke="#6ee7ff" stroke-width="8" />
+            </svg>
+          </div>
+          <div class="brand-text">
+            <small>all-in-one weight, fasting and low-carb tracker</small>
+            <strong>Metabolic <span class="gradient-text">Track</span></strong>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn" id="themeBtn" type="button">Light mode</button>
+          <button class="btn" id="exportJsonBtn" type="button">Export JSON</button>
+          <button class="btn" id="exportCsvBtn" type="button">Export CSV</button>
+        </div>
+      </div>
+      <p class="hero-copy">Record weight, import historical readings, track fasts, monitor low-carb consistency and review estimated metabolic stages from one Vercel-ready single-file app.</p>
+    </section>
+
+    <section class="grid metrics" aria-label="Weight summary metrics">
+      <article class="card metric">
+        <div class="metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div><div class="metric-label">Latest weight</div><div class="metric-value" id="latestWeight">--</div><div class="metric-note" id="latestWeightNote">Add a reading</div></div>
+      </article>
+      <article class="card metric">
+        <div class="metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 16l4-4 4 3 6-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="metric-label">Total change</div><div class="metric-value" id="totalChange">--</div><div class="metric-note" id="totalChangeNote">Across readings</div></div>
+      </article>
+      <article class="card metric">
+        <div class="metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 17h16M7 14l3-3 3 2 5-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="metric-label">Average weekly trend</div><div class="metric-value" id="weeklyTrend">--</div><div class="metric-note" id="weeklyTrendNote">Based on first to latest</div></div>
+      </article>
+      <article class="card metric">
+        <div class="metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 0-9-9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div><div class="metric-label">Target progress</div><div class="metric-value" id="targetProgress">--</div><div class="metric-note" id="targetProgressNote">Set target below</div></div>
+      </article>
+    </section>
+
+    <section class="card grid" style="display:block;">
+      <div>
+        <h2>Weight trend analysis</h2>
+        <p class="section-subtitle">Actual readings are shown with a 3-reading moving average to reduce noise from water, glycogen and scale variation.</p>
+      </div>
+      <div id="chartContainer" class="chart-wrap"></div>
+      <div class="legend"><span><i class="dot"></i>Actual readings</span><span><i class="dot avg"></i>3-reading moving average</span></div>
+      <div class="notice" id="weightInterpretation"><strong>Current interpretation:</strong> Add at least two readings to calculate a trend.</div>
+    </section>
+
+    <nav class="tabs" aria-label="App sections">
+      <button class="tab active" type="button" data-panel="weights">Weight</button>
+      <button class="tab" type="button" data-panel="fasting">Fasting</button>
+      <button class="tab" type="button" data-panel="lowcarb">Low-carb</button>
+      <button class="tab" type="button" data-panel="food">Food log</button>
+      <button class="tab" type="button" data-panel="data">Data</button>
+    </nav>
+
+    <section class="panel active" id="panel-weights">
+      <div class="grid two">
+        <article class="card">
+          <h2>Add weight reading</h2>
+          <p class="section-subtitle">Use kg or lb. The app stores readings internally in kg.</p>
+          <form id="weightForm">
+            <label for="weightDate">Date and time</label>
+            <input id="weightDate" type="datetime-local" required />
+            <div class="form-row">
+              <div>
+                <label for="weightValue">Weight</label>
+                <input id="weightValue" type="number" step="0.01" min="1" placeholder="e.g. 128.75" required />
+              </div>
+              <div>
+                <label for="weightUnit">Unit</label>
+                <select id="weightUnit"><option value="kg">kg</option><option value="lb">lb</option></select>
+              </div>
+            </div>
+            <label for="weightNote">Notes</label>
+            <input id="weightNote" type="text" placeholder="Home scale, after fast, evening etc." />
+            <button class="btn primary full" type="submit">Save weight</button>
+          </form>
+        </article>
+
+        <article class="card">
+          <h2>Upload or paste old data</h2>
+          <p class="section-subtitle">Paste CSV/text, or upload a CSV file. Example: <span class="pill">Date, Weight, Unit, Note</span></p>
+          <label for="importText">Paste data</label>
+          <textarea id="importText" placeholder="Date, Weight, Unit, Note&#10;23/07/2025 08:24, 131.8, kg, Home scale&#10;29/07/2025 08:10, 129.45, kg, After low carb"></textarea>
+          <div class="form-row">
+            <div>
+              <label for="fileInput">CSV file</label>
+              <input id="fileInput" type="file" accept=".csv,text/csv,text/plain" />
+            </div>
+            <div>
+              <label for="importUnitDefault">Default unit if missing</label>
+              <select id="importUnitDefault"><option value="kg">kg</option><option value="lb">lb</option></select>
+            </div>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" id="previewImportBtn" type="button">Preview import</button>
+            <button class="btn" id="sampleDataBtn" type="button">Load sample data</button>
+          </div>
+          <div id="importPreview" class="notice" style="display:none;"></div>
+        </article>
+      </div>
+
+      <article class="card" style="margin-top:18px;">
+        <h2>Weight history</h2>
+        <div id="weightTable"></div>
+      </article>
+    </section>
+
+    <section class="panel" id="panel-fasting">
+      <div class="grid two">
+        <article class="card">
+          <h2>Fasting timer</h2>
+          <p class="section-subtitle">Start a fast, set a target and monitor estimated fasting stage.</p>
+          <div class="fast-display">
+            <div class="fast-time" id="fastTime">00:00:00</div>
+            <div class="fast-status" id="fastStatus">No active fast</div>
+            <div class="progress-bar"><div class="progress-fill" id="fastProgress"></div></div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label for="fastStart">Fast start</label>
+              <input id="fastStart" type="datetime-local" />
+            </div>
+            <div>
+              <label for="fastTarget">Target hours</label>
+              <input id="fastTarget" type="number" min="1" step="1" value="24" />
+            </div>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" id="startFastBtn" type="button">Start fast</button>
+            <button class="btn" id="endFastBtn" type="button">End fast</button>
+            <button class="btn danger" id="resetFastBtn" type="button">Reset</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>Estimated fasting stages</h2>
+          <p class="section-subtitle">These are general estimates. Individual response varies by previous diet, activity, liver glycogen, insulin sensitivity and total calorie intake.</p>
+          <div class="stage-list" id="fastStages"></div>
+          <div class="notice warn"><strong>Safety note:</strong> Seek medical advice before prolonged fasting if you have diabetes, kidney disease, eating-disorder history, pregnancy, frailty, or take medication affected by food intake.</div>
+        </article>
+      </div>
+      <article class="card" style="margin-top:18px;">
+        <h2>Completed fasts</h2>
+        <div id="fastHistory"></div>
+      </article>
+    </section>
+
+    <section class="panel" id="panel-lowcarb">
+      <div class="grid two">
+        <article class="card">
+          <h2>Low-carb settings</h2>
+          <p class="section-subtitle">Use this to estimate your likely low-carb phase and monitor consistency.</p>
+          <form id="settingsForm">
+            <div class="form-row">
+              <div>
+                <label for="targetWeight">Target weight</label>
+                <input id="targetWeight" type="number" step="0.1" min="1" placeholder="e.g. 95" />
+              </div>
+              <div>
+                <label for="targetUnit">Target unit</label>
+                <select id="targetUnit"><option value="kg">kg</option><option value="lb">lb</option></select>
+              </div>
+            </div>
+            <label for="lowCarbStart">Low-carb start date/time</label>
+            <input id="lowCarbStart" type="datetime-local" />
+            <div class="form-row">
+              <div>
+                <label for="carbTarget">Daily carb target, grams</label>
+                <input id="carbTarget" type="number" min="0" step="1" value="30" />
+              </div>
+              <div>
+                <label for="proteinTarget">Daily protein target, grams</label>
+                <input id="proteinTarget" type="number" min="0" step="1" placeholder="optional" />
+              </div>
+            </div>
+            <button class="btn primary full" type="submit">Save settings</button>
+          </form>
+        </article>
+
+        <article class="card">
+          <h2>Current low-carb phase</h2>
+          <div id="lowCarbStatus" class="notice"></div>
+          <h3 style="margin-top:18px;">Low-carb effectiveness checklist</h3>
+          <div class="stage-list">
+            <div class="stage"><strong>Carb consistency</strong> Keep net carbs near your target. For many ketogenic approaches this is often 20-50 g/day, but individual tolerance varies.</div>
+            <div class="stage"><strong>Protein adequacy</strong> Do not under-eat protein. It helps preserve lean mass during weight loss.</div>
+            <div class="stage"><strong>Electrolytes and fluids</strong> Low-carb dieting can increase water and sodium loss early on. Consider hydration, salt, magnesium and potassium from food where appropriate.</div>
+            <div class="stage"><strong>Trend over single reading</strong> Early drops are often water and glycogen. Judge progress by weekly trend, waist changes and adherence.</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-food">
+      <div class="grid two">
+        <article class="card">
+          <h2>Add food entry</h2>
+          <p class="section-subtitle">Track carbs and protein to support low-carb consistency.</p>
+          <form id="foodForm">
+            <label for="foodDate">Date and time</label>
+            <input id="foodDate" type="datetime-local" required />
+            <label for="foodName">Meal or food</label>
+            <input id="foodName" type="text" placeholder="e.g. eggs, avocado, smoked turkey" required />
+            <div class="form-row three-cols">
+              <div><label for="foodCarbs">Carbs g</label><input id="foodCarbs" type="number" min="0" step="0.1" value="0" /></div>
+              <div><label for="foodProtein">Protein g</label><input id="foodProtein" type="number" min="0" step="0.1" value="0" /></div>
+              <div><label for="foodCalories">Calories</label><input id="foodCalories" type="number" min="0" step="1" placeholder="optional" /></div>
+            </div>
+            <button class="btn primary full" type="submit">Save food</button>
+          </form>
+        </article>
+        <article class="card">
+          <h2>Today’s totals</h2>
+          <div id="todayTotals" class="notice"></div>
+          <h3 style="margin-top:18px;">Advice</h3>
+          <div id="foodAdvice" class="notice"></div>
+        </article>
+      </div>
+      <article class="card" style="margin-top:18px;">
+        <h2>Food history</h2>
+        <div id="foodTable"></div>
+      </article>
+    </section>
+
+    <section class="panel" id="panel-data">
+      <div class="grid two">
+        <article class="card">
+          <h2>Backup and restore</h2>
+          <p class="section-subtitle">Export your data regularly. Your data is stored only in this browser using local storage.</p>
+          <div class="button-row">
+            <button class="btn primary" id="exportJsonBtn2" type="button">Download JSON backup</button>
+            <button class="btn" id="exportCsvBtn2" type="button">Download CSV</button>
+          </div>
+          <label for="restoreJson">Restore JSON backup</label>
+          <input id="restoreJson" type="file" accept="application/json,.json" />
+          <div class="button-row"><button class="btn danger" id="clearDataBtn" type="button">Clear all data</button></div>
+        </article>
+        <article class="card">
+          <h2>Deployment note</h2>
+          <div class="notice"><strong>This version is a single-file app.</strong> Upload only this <code>index.html</code> file to the root of your GitHub repository. In Vercel, use a static/other project with no build command and no output directory. The app should open directly without React, Vite, Node, npm or a build step.</div>
+          <div class="notice warn"><strong>Clinical note:</strong> Ketosis, fasting and weight trend interpretations are educational estimates only. This app is not a medical device and does not diagnose, treat or monitor disease.</div>
+        </article>
+      </div>
+    </section>
+
+    <footer class="footer">Metabolic Track stores data locally on your device/browser. Keep your own backups before clearing browser data.</footer>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const STORAGE_KEY = 'metabolicTrackSingleFile.v1';
+      const KG_PER_LB = 0.45359237;
+
+      const defaultState = {
+        theme: 'dark',
+        settings: {
+          targetWeightKg: 95,
+          targetUnit: 'kg',
+          lowCarbStart: '',
+          carbTarget: 30,
+          proteinTarget: ''
+        },
+        weights: [
+          { id: uid(), date: '2025-07-06T18:45', weightKg: 138.5, note: 'Pre-diet baseline', source: 'sample' },
+          { id: uid(), date: '2025-07-16T14:45', weightKg: 133.7, note: 'Work scale', source: 'sample' },
+          { id: uid(), date: '2025-07-23T08:24', weightKg: 131.8, note: 'Home scale', source: 'sample' },
+          { id: uid(), date: '2025-07-29T08:10', weightKg: 129.45, note: 'Home scale', source: 'sample' },
+          { id: uid(), date: '2025-08-02T10:43', weightKg: 128.75, note: 'Home scale', source: 'sample' }
+        ],
+        fasting: {
+          activeStart: '',
+          targetHours: 24,
+          history: []
+        },
+        food: []
+      };
+
+      let state = loadState();
+
+      const $ = (id) => document.getElementById(id);
+      const qs = (selector) => document.querySelector(selector);
+      const qsa = (selector) => Array.from(document.querySelectorAll(selector));
+
+      function uid() {
+        return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return structuredCloneSafe(defaultState);
+          const parsed = JSON.parse(raw);
+          return mergeState(structuredCloneSafe(defaultState), parsed);
+        } catch (error) {
+          console.warn('Unable to load saved data', error);
+          return structuredCloneSafe(defaultState);
+        }
+      }
+
+      function structuredCloneSafe(obj) {
+        return JSON.parse(JSON.stringify(obj));
+      }
+
+      function mergeState(base, saved) {
+        const merged = { ...base, ...saved };
+        merged.settings = { ...base.settings, ...(saved.settings || {}) };
+        merged.fasting = { ...base.fasting, ...(saved.fasting || {}) };
+        merged.weights = Array.isArray(saved.weights) ? saved.weights : base.weights;
+        merged.food = Array.isArray(saved.food) ? saved.food : base.food;
+        merged.fasting.history = Array.isArray(merged.fasting.history) ? merged.fasting.history : [];
+        return merged;
+      }
+
+      function saveState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function toKg(value, unit) {
+        const n = Number(value);
+        if (!Number.isFinite(n)) return null;
+        return unit === 'lb' ? n * KG_PER_LB : n;
+      }
+
+      function fromKg(kg, unit = 'kg') {
+        return unit === 'lb' ? kg / KG_PER_LB : kg;
+      }
+
+      function formatKg(kg, digits = 2) {
+        if (!Number.isFinite(Number(kg))) return '--';
+        return `${Number(kg).toFixed(digits)} kg`;
+      }
+
+      function parseDate(input) {
+        if (!input) return null;
+        const value = String(input).trim();
+        if (!value) return null;
+
+        if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value)) {
+          const d = new Date(value);
+          return Number.isNaN(d.getTime()) ? null : localIso(d);
+        }
+
+        const normal = value.replace(',', ' ').replace(/\s+/g, ' ').trim();
+        let match = normal.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})(?:\s+(\d{1,2}):(\d{2}))?/);
+        if (match) {
+          let [, dd, mm, yyyy, hh = '00', min = '00'] = match;
+          if (yyyy.length === 2) yyyy = '20' + yyyy;
+          const d = new Date(Number(yyyy), Number(mm) - 1, Number(dd), Number(hh), Number(min));
+          return Number.isNaN(d.getTime()) ? null : localIso(d);
+        }
+
+        match = normal.match(/^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})(?:\s+(\d{1,2}):(\d{2}))?/);
+        if (match) {
+          const [, yyyy, mm, dd, hh = '00', min = '00'] = match;
+          const d = new Date(Number(yyyy), Number(mm) - 1, Number(dd), Number(hh), Number(min));
+          return Number.isNaN(d.getTime()) ? null : localIso(d);
+        }
+
+        const d = new Date(value);
+        return Number.isNaN(d.getTime()) ? null : localIso(d);
+      }
+
+      function localIso(date = new Date()) {
+        const pad = n => String(n).padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+      }
+
+      function displayDate(iso) {
+        if (!iso) return '--';
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return iso;
+        return d.toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' });
+      }
+
+      function daysBetween(a, b) {
+        return (new Date(b).getTime() - new Date(a).getTime()) / 86400000;
+      }
+
+      function sortedWeights() {
+        return [...state.weights]
+          .filter(w => w && w.date && Number.isFinite(Number(w.weightKg)))
+          .sort((a, b) => new Date(a.date) - new Date(b.date));
+      }
+
+      function movingAverage(items, windowSize = 3) {
+        return items.map((item, index) => {
+          const start = Math.max(0, index - windowSize + 1);
+          const slice = items.slice(start, index + 1);
+          const avg = slice.reduce((sum, x) => sum + Number(x.weightKg), 0) / slice.length;
+          return { ...item, weightKg: avg };
+        });
+      }
+
+      function getWeightStats() {
+        const weights = sortedWeights();
+        if (!weights.length) return null;
+        const first = weights[0];
+        const latest = weights[weights.length - 1];
+        const totalChange = Number(latest.weightKg) - Number(first.weightKg);
+        const days = Math.max(0, daysBetween(first.date, latest.date));
+        const weeklyChange = days > 0 ? totalChange / days * 7 : 0;
+        const targetKg = Number(state.settings.targetWeightKg);
+        let targetProgress = null;
+        let weeksToTarget = null;
+
+        if (Number.isFinite(targetKg) && targetKg > 0 && Number(first.weightKg) !== targetKg) {
+          const totalGoal = Number(first.weightKg) - targetKg;
+          const achieved = Number(first.weightKg) - Number(latest.weightKg);
+          targetProgress = totalGoal !== 0 ? Math.max(0, Math.min(100, (achieved / totalGoal) * 100)) : null;
+          const remaining = Number(latest.weightKg) - targetKg;
+          if (remaining > 0 && weeklyChange < 0) weeksToTarget = remaining / Math.abs(weeklyChange);
+        }
+
+        return { weights, first, latest, totalChange, days, weeklyChange, targetProgress, weeksToTarget };
+      }
+
+      function updateMetrics() {
+        const stats = getWeightStats();
+        if (!stats) {
+          $('latestWeight').textContent = '--';
+          $('latestWeightNote').textContent = 'Add a reading';
+          $('totalChange').textContent = '--';
+          $('weeklyTrend').textContent = '--';
+          $('targetProgress').textContent = '--';
+          return;
+        }
+
+        $('latestWeight').textContent = formatKg(stats.latest.weightKg);
+        $('latestWeightNote').textContent = displayDate(stats.latest.date);
+        const sign = stats.totalChange > 0 ? '+' : '';
+        $('totalChange').textContent = `${sign}${stats.totalChange.toFixed(2)} kg`;
+        $('totalChangeNote').textContent = `Across ${stats.weights.length} readings`;
+
+        const weeklySign = stats.weeklyChange > 0 ? '+' : '';
+        $('weeklyTrend').textContent = stats.days > 0 ? `${weeklySign}${stats.weeklyChange.toFixed(2)} kg/week` : '--';
+        $('weeklyTrendNote').textContent = stats.days > 0 ? `Over ${stats.days.toFixed(1)} days` : 'Need another date';
+
+        if (Number.isFinite(stats.targetProgress)) {
+          $('targetProgress').textContent = `${stats.targetProgress.toFixed(0)}%`;
+          $('targetProgressNote').textContent = Number.isFinite(stats.weeksToTarget) ? `Estimated ${stats.weeksToTarget.toFixed(1)} weeks` : 'Target set';
+        } else {
+          $('targetProgress').textContent = '--';
+          $('targetProgressNote').textContent = 'Set target below';
+        }
+
+        $('weightInterpretation').innerHTML = `<strong>Current interpretation:</strong> ${getWeightInterpretation(stats)}`;
+      }
+
+      function getWeightInterpretation(stats) {
+        if (!stats || stats.weights.length < 2) return 'Add at least two readings to calculate a trend.';
+        const weekly = stats.weeklyChange;
+        if (weekly <= -2.5) return 'Your current rate is very rapid. A large early drop can be water and glycogen. Watch the weekly trend rather than one reading.';
+        if (weekly <= -1.0) return 'You are losing weight at a strong pace. Continue monitoring energy, hunger, hydration and protein intake.';
+        if (weekly < -0.25) return 'You are trending downward at a gradual pace. This is often more sustainable than very rapid loss.';
+        if (weekly <= 0.25) return 'Your weight is broadly stable. Check carb consistency, total calories, sodium/water changes and measurement timing.';
+        return 'Your trend is upward. Review food intake, carb exposure, snacking, alcohol, sleep and consistency.';
+      }
+
+      function renderChart() {
+        const weights = sortedWeights();
+        const container = $('chartContainer');
+        if (weights.length < 2) {
+          container.innerHTML = '<div class="empty">Add at least two weight readings to generate a graph.</div>';
+          return;
+        }
+
+        const avg = movingAverage(weights);
+        const allY = [...weights.map(w => w.weightKg), ...avg.map(w => w.weightKg)];
+        const minY = Math.min(...allY);
+        const maxY = Math.max(...allY);
+        const padY = Math.max(0.6, (maxY - minY) * 0.18);
+        const yMin = minY - padY;
+        const yMax = maxY + padY;
+
+        const width = 1000;
+        const height = 280;
+        const left = 48;
+        const right = 20;
+        const top = 24;
+        const bottom = 42;
+        const plotW = width - left - right;
+        const plotH = height - top - bottom;
+        const firstTime = new Date(weights[0].date).getTime();
+        const lastTime = new Date(weights[weights.length - 1].date).getTime();
+        const span = Math.max(1, lastTime - firstTime);
+
+        const x = item => left + ((new Date(item.date).getTime() - firstTime) / span) * plotW;
+        const y = item => top + ((yMax - item.weightKg) / (yMax - yMin)) * plotH;
+        const pointsToPath = items => items.map((item, i) => `${i ? 'L' : 'M'} ${x(item).toFixed(1)} ${y(item).toFixed(1)}`).join(' ');
+        const yTicks = 5;
+        let grid = '';
+        for (let i = 0; i < yTicks; i++) {
+          const val = yMin + (i / (yTicks - 1)) * (yMax - yMin);
+          const py = top + ((yMax - val) / (yMax - yMin)) * plotH;
+          grid += `<line class="gridline" x1="${left}" x2="${width - right}" y1="${py}" y2="${py}"/><text class="tick" x="8" y="${py + 4}">${val.toFixed(1)}</text>`;
+        }
+        const points = weights.map(item => `<circle class="point" cx="${x(item).toFixed(1)}" cy="${y(item).toFixed(1)}" r="5"><title>${displayDate(item.date)}: ${formatKg(item.weightKg)}</title></circle>`).join('');
+
+        container.innerHTML = `<svg class="chart" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="Weight trend chart">
+          ${grid}
+          <line class="axis" x1="${left}" y1="${top}" x2="${left}" y2="${height - bottom}" />
+          <line class="axis" x1="${left}" y1="${height - bottom}" x2="${width - right}" y2="${height - bottom}" />
+          <path class="line-average" d="${pointsToPath(avg)}" />
+          <path class="line-actual" d="${pointsToPath(weights)}" />
+          ${points}
+        </svg>`;
+      }
+
+      function renderWeightTable() {
+        const weights = sortedWeights().reverse();
+        const container = $('weightTable');
+        if (!weights.length) {
+          container.innerHTML = '<div class="empty">No weight readings yet.</div>';
+          return;
+        }
+        container.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Date</th><th>Weight</th><th>Change from previous</th><th>Note</th><th></th></tr></thead><tbody>${weights.map((w, i) => {
+          const prev = weights[i + 1];
+          const change = prev ? w.weightKg - prev.weightKg : null;
+          return `<tr><td>${displayDate(w.date)}</td><td><strong>${formatKg(w.weightKg)}</strong></td><td>${change === null ? '--' : (change > 0 ? '+' : '') + change.toFixed(2) + ' kg'}</td><td>${escapeHtml(w.note || '')}</td><td><button class="btn small danger" data-delete-weight="${w.id}">Delete</button></td></tr>`;
+        }).join('')}</tbody></table></div>`;
+      }
+
+      function renderFastStages(hours = 0) {
+        const stages = [
+          { min: 0, max: 4, title: '0-4 hours: fed state', body: 'Your body is mainly using recently eaten food. Insulin is usually higher after meals.' },
+          { min: 4, max: 12, title: '4-12 hours: post-absorptive phase', body: 'Blood glucose and insulin may fall. Liver glycogen starts contributing more.' },
+          { min: 12, max: 18, title: '12-18 hours: glycogen drawdown', body: 'Fat oxidation often increases. Some people begin producing more ketones.' },
+          { min: 18, max: 24, title: '18-24 hours: fat burning increases', body: 'Ketones may become more noticeable, especially if already low carb.' },
+          { min: 24, max: 48, title: '24-48 hours: deeper fasting adaptation', body: 'Ketosis may increase. Hydration and electrolytes become more important.' },
+          { min: 48, max: Infinity, title: '48+ hours: prolonged fast', body: 'Higher caution phase. Consider medical advice, especially with medication or health conditions.' }
+        ];
+        $('fastStages').innerHTML = stages.map(s => `<div class="stage ${hours >= s.min && hours < s.max ? 'active' : ''}"><strong>${s.title}</strong>${s.body}</div>`).join('');
+      }
+
+      function updateFastingTimer() {
+        const start = state.fasting.activeStart;
+        const targetHours = Number(state.fasting.targetHours || 24);
+        if (!start) {
+          $('fastTime').textContent = '00:00:00';
+          $('fastStatus').textContent = 'No active fast';
+          $('fastProgress').style.width = '0%';
+          renderFastStages(0);
+          return;
+        }
+        const elapsedMs = Math.max(0, Date.now() - new Date(start).getTime());
+        const hours = elapsedMs / 3600000;
+        const h = Math.floor(elapsedMs / 3600000);
+        const m = Math.floor((elapsedMs % 3600000) / 60000);
+        const s = Math.floor((elapsedMs % 60000) / 1000);
+        $('fastTime').textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        $('fastStatus').textContent = `Started ${displayDate(start)} • Target ${targetHours} hours`;
+        $('fastProgress').style.width = `${Math.min(100, (hours / targetHours) * 100)}%`;
+        renderFastStages(hours);
+      }
+
+      function renderFastHistory() {
+        const items = [...state.fasting.history].sort((a, b) => new Date(b.start) - new Date(a.start));
+        const container = $('fastHistory');
+        if (!items.length) {
+          container.innerHTML = '<div class="empty">No completed fasts yet.</div>';
+          return;
+        }
+        container.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Start</th><th>End</th><th>Duration</th><th></th></tr></thead><tbody>${items.map(f => `<tr><td>${displayDate(f.start)}</td><td>${displayDate(f.end)}</td><td><strong>${Number(f.hours).toFixed(1)} hours</strong></td><td><button class="btn small danger" data-delete-fast="${f.id}">Delete</button></td></tr>`).join('')}</tbody></table></div>`;
+      }
+
+      function renderLowCarbStatus() {
+        const start = state.settings.lowCarbStart;
+        const target = Number(state.settings.carbTarget || 0);
+        const todayCarbs = getTodayTotals().carbs;
+        if (!start) {
+          $('lowCarbStatus').innerHTML = '<strong>No low-carb start date set.</strong><br>Set your start date to estimate your current low-carb phase.';
+          return;
+        }
+        const hours = Math.max(0, (Date.now() - new Date(start).getTime()) / 3600000);
+        const days = hours / 24;
+        let title = '';
+        let body = '';
+        if (days < 1) {
+          title = 'Day 0-1: transition phase';
+          body = 'Your body may still be using recently stored glycogen. Ketosis is possible but not guaranteed.';
+        } else if (days < 3) {
+          title = 'Day 1-3: glycogen depletion phase';
+          body = 'Early weight loss may be water and glycogen. Hunger, headache or fatigue can occur if electrolytes are low.';
+        } else if (days < 7) {
+          title = 'Day 3-7: likely ketone increase';
+          body = 'If carbs are consistently low, ketone production may increase. Energy can still fluctuate.';
+        } else if (days < 14) {
+          title = 'Week 1-2: adaptation phase';
+          body = 'Your body may become more comfortable using fat and ketones. Protein and mineral intake remain important.';
+        } else {
+          title = '2+ weeks: ongoing low-carb adaptation';
+          body = 'You may be more adapted to low-carb eating, but progress still depends on consistency, calories, sleep and activity.';
+        }
+        const carbLine = target > 0 ? `<br><br><strong>Today:</strong> ${todayCarbs.toFixed(1)} g carbs recorded against your ${target} g target.` : '';
+        const carbAdvice = target > 0 && todayCarbs > target ? '<br><strong>Note:</strong> You are currently above your daily carb target based on entered food.' : '';
+        $('lowCarbStatus').innerHTML = `<strong>${title}</strong><br>${body}<br><br><strong>Time since start:</strong> ${days.toFixed(1)} days.${carbLine}${carbAdvice}`;
+      }
+
+      function getTodayTotals() {
+        const today = new Date().toISOString().slice(0, 10);
+        const entries = state.food.filter(f => String(f.date || '').slice(0, 10) === today);
+        return entries.reduce((acc, f) => {
+          acc.carbs += Number(f.carbs || 0);
+          acc.protein += Number(f.protein || 0);
+          acc.calories += Number(f.calories || 0);
+          return acc;
+        }, { carbs: 0, protein: 0, calories: 0 });
+      }
+
+      function renderFood() {
+        const totals = getTodayTotals();
+        const carbTarget = Number(state.settings.carbTarget || 0);
+        const proteinTarget = Number(state.settings.proteinTarget || 0);
+        $('todayTotals').innerHTML = `<strong>Today:</strong><br>Carbs: ${totals.carbs.toFixed(1)} g${carbTarget ? ` / ${carbTarget} g target` : ''}<br>Protein: ${totals.protein.toFixed(1)} g${proteinTarget ? ` / ${proteinTarget} g target` : ''}<br>Calories: ${totals.calories.toFixed(0)}`;
+
+        let advice = 'Record foods consistently to see whether your low-carb plan is being followed.';
+        if (carbTarget && totals.carbs > carbTarget) advice = 'Your recorded carbs are above target today. Check sauces, drinks, snacks, rice, bread, flour, fruit juice and hidden sugar.';
+        else if (carbTarget && totals.carbs <= carbTarget) advice = 'Your recorded carbs are within target today. Keep meals protein-rich and use vegetables/fats according to your plan.';
+        if (proteinTarget && totals.protein < proteinTarget * 0.7) advice += ' Protein appears low compared with your target; consider whether your intake is adequate.';
+        $('foodAdvice').textContent = advice;
+
+        const items = [...state.food].sort((a, b) => new Date(b.date) - new Date(a.date));
+        const container = $('foodTable');
+        if (!items.length) {
+          container.innerHTML = '<div class="empty">No food entries yet.</div>';
+          return;
+        }
+        container.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Date</th><th>Food</th><th>Carbs</th><th>Protein</th><th>Calories</th><th></th></tr></thead><tbody>${items.map(f => `<tr><td>${displayDate(f.date)}</td><td><strong>${escapeHtml(f.name)}</strong></td><td>${Number(f.carbs || 0).toFixed(1)} g</td><td>${Number(f.protein || 0).toFixed(1)} g</td><td>${Number(f.calories || 0).toFixed(0)}</td><td><button class="btn small danger" data-delete-food="${f.id}">Delete</button></td></tr>`).join('')}</tbody></table></div>`;
+      }
+
+      function parseImportText(text, defaultUnit = 'kg') {
+        const lines = String(text || '').split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        const parsed = [];
+        const errors = [];
+
+        for (const line of lines) {
+          if (/^date\s*[,;\t]/i.test(line) || /^date\s+weight/i.test(line)) continue;
+          const parts = splitLine(line);
+          if (parts.length < 2) {
+            errors.push(`Skipped: ${line}`);
+            continue;
+          }
+          const date = parseDate(parts[0]);
+          let weightPart = parts[1];
+          let unit = (parts[2] || '').toLowerCase().includes('lb') ? 'lb' : ((parts[2] || '').toLowerCase().includes('kg') ? 'kg' : defaultUnit);
+          const weightMatch = String(weightPart).match(/-?\d+(?:\.\d+)?/);
+          if (!date || !weightMatch) {
+            const flexible = line.match(/(.+?)\s+(-?\d+(?:\.\d+)?)\s*(kg|lb)?\s*(.*)$/i);
+            if (flexible) {
+              const flexDate = parseDate(flexible[1]);
+              const flexKg = toKg(flexible[2], flexible[3] ? flexible[3].toLowerCase() : defaultUnit);
+              if (flexDate && flexKg) {
+                parsed.push({ id: uid(), date: flexDate, weightKg: Number(flexKg.toFixed(3)), note: flexible[4] || 'Imported', source: 'import' });
+                continue;
+              }
+            }
+            errors.push(`Skipped: ${line}`);
+            continue;
+          }
+          const weightKg = toKg(Number(weightMatch[0]), unit);
+          if (!weightKg || weightKg <= 0) {
+            errors.push(`Skipped: ${line}`);
+            continue;
+          }
+          const note = parts.slice(3).join(', ') || 'Imported';
+          parsed.push({ id: uid(), date, weightKg: Number(weightKg.toFixed(3)), note, source: 'import' });
+        }
+        return { parsed, errors };
+      }
+
+      function splitLine(line) {
+        if (line.includes(',')) return line.split(',').map(x => x.trim());
+        if (line.includes('\t')) return line.split('\t').map(x => x.trim());
+        if (line.includes(';')) return line.split(';').map(x => x.trim());
+        return line.split(/\s{2,}/).map(x => x.trim());
+      }
+
+      function addImportedWeights(items) {
+        let added = 0;
+        for (const item of items) {
+          const exists = state.weights.some(w => w.date === item.date && Math.abs(Number(w.weightKg) - Number(item.weightKg)) < 0.01);
+          if (!exists) {
+            state.weights.push(item);
+            added++;
+          }
+        }
+        saveState();
+        renderAll();
+        return added;
+      }
+
+      function download(filename, content, type = 'text/plain') {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function exportJson() {
+        download(`metabolic-track-backup-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(state, null, 2), 'application/json');
+      }
+
+      function exportCsv() {
+        const rows = [['type','date','value1','value2','value3','note']];
+        sortedWeights().forEach(w => rows.push(['weight', w.date, Number(w.weightKg).toFixed(2), 'kg', '', w.note || '']));
+        state.food.forEach(f => rows.push(['food', f.date, f.name || '', `${Number(f.carbs || 0)}g carbs`, `${Number(f.protein || 0)}g protein`, `${Number(f.calories || 0)} kcal`]));
+        state.fasting.history.forEach(f => rows.push(['fast', f.start, f.end, `${Number(f.hours || 0).toFixed(1)} hours`, '', 'completed fast']));
+        const csv = rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+        download(`metabolic-track-export-${new Date().toISOString().slice(0,10)}.csv`, csv, 'text/csv');
+      }
+
+      function renderAll() {
+        document.documentElement.dataset.theme = state.theme || 'dark';
+        $('themeBtn').textContent = state.theme === 'dark' ? 'Light mode' : 'Dark mode';
+        fillForms();
+        updateMetrics();
+        renderChart();
+        renderWeightTable();
+        updateFastingTimer();
+        renderFastHistory();
+        renderLowCarbStatus();
+        renderFood();
+      }
+
+      function fillForms() {
+        if (!$('weightDate').value) $('weightDate').value = localIso();
+        if (!$('fastStart').value) $('fastStart').value = state.fasting.activeStart || localIso();
+        if (!$('foodDate').value) $('foodDate').value = localIso();
+        $('fastTarget').value = state.fasting.targetHours || 24;
+        $('targetWeight').value = state.settings.targetWeightKg ? fromKg(state.settings.targetWeightKg, state.settings.targetUnit || 'kg').toFixed(1).replace(/\.0$/, '') : '';
+        $('targetUnit').value = state.settings.targetUnit || 'kg';
+        $('lowCarbStart').value = state.settings.lowCarbStart || '';
+        $('carbTarget').value = state.settings.carbTarget ?? 30;
+        $('proteinTarget').value = state.settings.proteinTarget ?? '';
+      }
+
+      function bindEvents() {
+        $('themeBtn').addEventListener('click', () => {
+          state.theme = state.theme === 'dark' ? 'light' : 'dark';
+          saveState();
+          renderAll();
+        });
+
+        qsa('.tab').forEach(tab => tab.addEventListener('click', () => {
+          qsa('.tab').forEach(t => t.classList.remove('active'));
+          qsa('.panel').forEach(p => p.classList.remove('active'));
+          tab.classList.add('active');
+          $(`panel-${tab.dataset.panel}`).classList.add('active');
+        }));
+
+        $('weightForm').addEventListener('submit', event => {
+          event.preventDefault();
+          const weightKg = toKg($('weightValue').value, $('weightUnit').value);
+          if (!weightKg || weightKg <= 0) return alert('Please enter a valid weight.');
+          state.weights.push({ id: uid(), date: $('weightDate').value || localIso(), weightKg: Number(weightKg.toFixed(3)), note: $('weightNote').value.trim(), source: 'manual' });
+          $('weightValue').value = '';
+          $('weightNote').value = '';
+          saveState();
+          renderAll();
+        });
+
+        $('settingsForm').addEventListener('submit', event => {
+          event.preventDefault();
+          const targetKg = toKg($('targetWeight').value, $('targetUnit').value);
+          state.settings.targetWeightKg = targetKg ? Number(targetKg.toFixed(3)) : '';
+          state.settings.targetUnit = $('targetUnit').value;
+          state.settings.lowCarbStart = $('lowCarbStart').value;
+          state.settings.carbTarget = Number($('carbTarget').value || 0);
+          state.settings.proteinTarget = $('proteinTarget').value ? Number($('proteinTarget').value) : '';
+          saveState();
+          renderAll();
+        });
+
+        $('previewImportBtn').addEventListener('click', () => {
+          const result = parseImportText($('importText').value, $('importUnitDefault').value);
+          const preview = $('importPreview');
+          preview.style.display = 'block';
+          if (!result.parsed.length) {
+            preview.innerHTML = `<strong>No valid readings found.</strong><br>${result.errors.slice(0, 4).map(escapeHtml).join('<br>')}`;
+            return;
+          }
+          const added = addImportedWeights(result.parsed);
+          preview.innerHTML = `<strong>Import completed.</strong><br>${added} new readings added. ${result.parsed.length - added} duplicates ignored. ${result.errors.length ? '<br>Some lines were skipped.' : ''}`;
+        });
+
+        $('sampleDataBtn').addEventListener('click', () => {
+          $('importText').value = 'Date, Weight, Unit, Note\n06/07/2025 18:45, 138.5, kg, Pre-diet baseline\n16/07/2025 14:45, 133.7, kg, Work scale\n23/07/2025 08:24, 131.8, kg, Home scale\n29/07/2025 08:10, 129.45, kg, Home scale\n02/08/2025 10:43, 128.75, kg, Home scale';
+        });
+
+        $('fileInput').addEventListener('change', event => {
+          const file = event.target.files && event.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => { $('importText').value = String(reader.result || ''); };
+          reader.readAsText(file);
+        });
+
+        $('startFastBtn').addEventListener('click', () => {
+          state.fasting.activeStart = $('fastStart').value || localIso();
+          state.fasting.targetHours = Number($('fastTarget').value || 24);
+          saveState();
+          renderAll();
+        });
+
+        $('endFastBtn').addEventListener('click', () => {
+          if (!state.fasting.activeStart) return alert('No active fast to end.');
+          const end = localIso();
+          const hours = Math.max(0, (new Date(end).getTime() - new Date(state.fasting.activeStart).getTime()) / 3600000);
+          state.fasting.history.push({ id: uid(), start: state.fasting.activeStart, end, hours: Number(hours.toFixed(2)) });
+          state.fasting.activeStart = '';
+          saveState();
+          renderAll();
+        });
+
+        $('resetFastBtn').addEventListener('click', () => {
+          if (!confirm('Reset the active fast without saving it?')) return;
+          state.fasting.activeStart = '';
+          saveState();
+          renderAll();
+        });
+
+        $('foodForm').addEventListener('submit', event => {
+          event.preventDefault();
+          state.food.push({
+            id: uid(),
+            date: $('foodDate').value || localIso(),
+            name: $('foodName').value.trim(),
+            carbs: Number($('foodCarbs').value || 0),
+            protein: Number($('foodProtein').value || 0),
+            calories: Number($('foodCalories').value || 0)
+          });
+          $('foodName').value = '';
+          $('foodCarbs').value = '0';
+          $('foodProtein').value = '0';
+          $('foodCalories').value = '';
+          saveState();
+          renderAll();
+        });
+
+        document.body.addEventListener('click', event => {
+          const weightId = event.target.getAttribute('data-delete-weight');
+          const foodId = event.target.getAttribute('data-delete-food');
+          const fastId = event.target.getAttribute('data-delete-fast');
+          if (weightId && confirm('Delete this weight reading?')) {
+            state.weights = state.weights.filter(w => w.id !== weightId);
+            saveState(); renderAll();
+          }
+          if (foodId && confirm('Delete this food entry?')) {
+            state.food = state.food.filter(f => f.id !== foodId);
+            saveState(); renderAll();
+          }
+          if (fastId && confirm('Delete this completed fast?')) {
+            state.fasting.history = state.fasting.history.filter(f => f.id !== fastId);
+            saveState(); renderAll();
+          }
+        });
+
+        $('exportJsonBtn').addEventListener('click', exportJson);
+        $('exportJsonBtn2').addEventListener('click', exportJson);
+        $('exportCsvBtn').addEventListener('click', exportCsv);
+        $('exportCsvBtn2').addEventListener('click', exportCsv);
+
+        $('restoreJson').addEventListener('change', event => {
+          const file = event.target.files && event.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const parsed = JSON.parse(String(reader.result || '{}'));
+              state = mergeState(structuredCloneSafe(defaultState), parsed);
+              saveState(); renderAll();
+              alert('Backup restored.');
+            } catch (error) {
+              alert('Could not restore that JSON file.');
+            }
+          };
+          reader.readAsText(file);
+        });
+
+        $('clearDataBtn').addEventListener('click', () => {
+          if (!confirm('Clear all Metabolic Track data from this browser?')) return;
+          localStorage.removeItem(STORAGE_KEY);
+          state = structuredCloneSafe(defaultState);
+          saveState(); renderAll();
+        });
+      }
+
+      function installManifestDataUrl() {
+        try {
+          const manifest = {
+            name: 'Metabolic Track',
+            short_name: 'Metabolic Track',
+            start_url: '.',
+            display: 'standalone',
+            background_color: '#07111f',
+            theme_color: '#07111f',
+            description: 'Weight, fasting and low-carb tracker',
+            icons: []
+          };
+          const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+          const link = document.createElement('link');
+          link.rel = 'manifest';
+          link.href = URL.createObjectURL(blob);
+          document.head.appendChild(link);
+        } catch (error) {
+          console.warn('Manifest creation skipped', error);
+        }
+      }
+
+      bindEvents();
+      installManifestDataUrl();
+      renderAll();
+      setInterval(updateFastingTimer, 1000);
+    })();
+  </script>
+</body>
 </html>
